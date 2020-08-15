@@ -11,7 +11,7 @@ object Converter {
         val name : String = obj.getString("name")
         val id : Int = obj.getInt("id")
 
-        var types : Array<Type?> = arrayOf()
+        var types : MutableList<Type?> = mutableListOf()
 
         for(i in 0 until JSONtypes.length())
         {
@@ -19,7 +19,7 @@ object Converter {
                 .getJSONObject("type")
                 .getString("name")
 
-            types[i] = typeMap[type]
+            types.add(typeMap[type.toUpperCase(Locale.ROOT)])
         }
 
         return Pokemon(id, name, types)

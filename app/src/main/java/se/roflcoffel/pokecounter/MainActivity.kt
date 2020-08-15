@@ -1,5 +1,6 @@
 package se.roflcoffel.pokecounter
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -12,7 +13,10 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONObject
+import java.io.InputStream
+import java.net.URL
 import java.util.*
+
 
 //Download all the Types
 //Get all types, and cache them locally
@@ -82,10 +86,10 @@ class MainActivity : AppCompatActivity() {
                 Response.Listener { response ->
                     val pokemon = Converter.toPokemon(response, typeMap)
 
-                    mTextViewResult.append(pokemon.toString())
+                    mTextViewResult.text = pokemon.toString()
                 },
-                Response.ErrorListener { error ->
-                    error.printStackTrace()
+                Response.ErrorListener { _ ->
+                    mTextViewResult.text = "Pokemon not found"
                 }
             )
         }
@@ -94,5 +98,15 @@ class MainActivity : AppCompatActivity() {
     private fun getJSON(url: String, resp: Response.Listener<JSONObject>, error : Response.ErrorListener) {
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null, resp, error)
         mQueue.add(jsonObjectRequest);
+    }
+
+    fun LoadImageFromWebOperations(url: String?): Drawable? {
+        return try {
+            val inStream: InputStream = URL(url).content as InputStream
+            Drawable.createFromStream(inStream, "srcName")
+        } catch (e: Exception) {
+            null
+            //TODO Error if failed to get image
+        }
     }
 }
